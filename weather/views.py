@@ -17,7 +17,7 @@ def index(request):
     #     response = "Unknown"
     # print(response)
     ip_data = requests.get("https://api.ipify.org?format=json").json()
-    load_data = requests.get("http://ip-api.com/json/" + result[0]).json()
+    load_data = requests.get("http://ip-api.com/json/" + ip_data['ip']).json()
     if request.method == "GET":
         location = request.GET.get('location')
         if location:
