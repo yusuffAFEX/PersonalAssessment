@@ -10,6 +10,8 @@ from ip2geotools.databases.noncommercial import DbIpCity
 
 def index(request):
 
+    ip2 = request.META.get('HTTP_X_FORWARDED_FOR')
+
     result = get_client_ip(request)
     # try:
     #     response = DbIpCity.get(result[0], api_key="free")
@@ -26,7 +28,8 @@ def index(request):
             locations = Location.objects.all()[:2]
     return render(request, "weather/index.html", {'locations': locations,
                                                   'load_data': load_data,
-                                                  'ip_data': ip_data})
+                                                  'ip_data': ip_data,
+                                                  'ip2': ip2})
 
 
 def details(request, location):
