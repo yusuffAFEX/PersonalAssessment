@@ -1,0 +1,55 @@
+{% extends "weather/base.html" %}
+
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-offset-4 is-4">
+                    <form method="get">{% csrf_token %}
+                        <div class="field has-addons">
+                            <div class="control is-expanded">
+                                <input class="input" type="text" name="location" placeholder="City Name">
+                            </div>
+                            <div class="control">
+                                <button class="button is-info" type="submit">
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-offset-4 is-4">
+                {{ ip_data }}
+                {{ load_data }}
+                {{ load_data.country }}
+                {{ load_data.query }}
+                {{ load_data.city }}
+                    {% for location in locations %}
+                    <div class="box">
+{#                        <article class="media">#}
+{#                            <div class="media-left">#}
+{#                                <figure class="image is-50x50">#}
+{#                                    <img src="http://openweathermap.org/img/w/10d.png" alt="Image">#}
+{#                                </figure>#}
+{#                            </div>#}
+{#                            <div class="media-content">#}
+                                <div class="content">
+                                    <p>
+                                        <span class="title"><a href="{% url "weather:details" location %}">{{ location }}</a></span>
+                                    </p>
+                                </div>
+{#                            </div>#}
+{#                        </article>#}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
