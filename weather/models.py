@@ -5,7 +5,6 @@ from django.db import models
 
 
 class Location(models.Model):
-    visitor = models.ForeignKey('Visitor', on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=200)
 
     def __str__(self):
@@ -13,7 +12,9 @@ class Location(models.Model):
 
 
 class Visitor(models.Model):
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
     email = models.EmailField()
+    is_subscribed = models.BooleanField(default=True)
 
     def __str__(self):
         return self.email

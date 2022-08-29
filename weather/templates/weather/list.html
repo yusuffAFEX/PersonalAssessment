@@ -1,0 +1,48 @@
+{% extends 'weather/base.html' %}
+
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-offset-4 is-4">
+                    <form method="get">{% csrf_token %}
+                        <div class="field has-addons">
+                            <div class="control is-expanded">
+                                <input class="input" type="text" name="location" placeholder="City Name">
+                            </div>
+                            <div class="control">
+                                <button class="btn btn-secondary" type="submit">
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <input id="status" name="status" type="hidden">
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-offset-4 is-4">
+                    <ul>
+                        {% for location in locations %}
+                            <div class="box">
+
+                                <div class="content">
+                                    <li>
+                                <span class="title"><a
+                                        href="{% url "weather:details" location %}">{{ location }}</a></span>
+                                    </li>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

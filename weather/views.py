@@ -1,48 +1,88 @@
+import json
+
 import requests
-from django.conf import settings
-from django.shortcuts import render
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse, reverse_lazy
 
 # Create your views here.
-from weather.models import Location
-from ipware import get_client_ip
-from ip2geotools.databases.noncommercial import DbIpCity
+from django.views import View
+from django.views.generic import ListView, FormView
+
+from weather.forms import VisitorForm
+from weather.models import Location, Visitor
 
 
-def index(request):
+class HomeView(View):
+    def get(self, request):
+        return render(request, 'weather/index.html')
 
-    ip2 = request.META.get('HTTP_X_FORWARDED_FOR')
 
-    result = get_client_ip(request)
-    # try:
-    #     response = DbIpCity.get(result[0], api_key="free")
-    # except Exception:
-    #     response = "Unknown"
-    # print(response)
-    ip_data = requests.get("https://api.ipify.org?format=json").json()
-    load_data = requests.get("http://ip-api.com/json/" + result[0]).json()
-    if request.method == "GET":
-        location = request.GET.get('location')
-        if location:
-            locations = Location.objects.filter(name__iexact=location)
+class LocationListView(ListView):
+    model = Location
+    template_name = 'weather/list.html'
+    context_object_name = 'locations'
+
+    def get_queryset(self):
+        search = self.request.GET.get('location')
+        if search is not None:
+            queryset = Location.objects.filter(name__iexact=search)
         else:
-            locations = Location.objects.all()[:2]
-    return render(request, "weather/index.html", {'locations': locations,
-                                                  'load_data': load_data,
-                                                  'ip_data': ip_data,
-                                                  'ip2': ip2})
+            queryset = Location.objects.all()[:5]
+        return queryset
 
 
-def details(request, location):
-    try:
-        api = requests.get(
-            "http://api.openweathermap.org/data/2.5/weather?q=" + location + ",nigeria&APPID=4c742b12a83585de3f10066724cd3d85").json()
-    except Exception:
-        api = "Error..."
+class LocationDetailView(View):
+    def get(self, request, location):
+        api_request = requests.get(
+                "http://api.openweathermap.org/data/2.5/weather?q=" + location + ",nigeria&APPID=4c742b12a83585de3f10066724cd3d85")
 
-    weather = {
-        'city': location,
-        'temperature': api['main']['temp'],
-        'description': api['weather'][0]['description']
-    }
+        try:
+            api = json.loads(api_request.content)
+        except Exception:
+            api = "Error..."
 
-    return render(request, "weather/detail.html", {'api': api, 'weather': weather})
+        context = {
+            'api': api,
+            'city': location,
+            'temperature': api['main']['temp'],
+            'description': api['weather'][0]['description'],
+        }
+        return render(request, "weather/detail.html", context)
+
+
+class VisitorFormView(FormView):
+    form_class = VisitorForm
+    template_name = 'weather/form.html'
+    success_url = reverse_lazy('weather:index')
+
+    def form_valid(self, form):
+        super(VisitorFormView, self).form_valid(form)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            name = form.cleaned_data['location']
+            if Visitor.objects.filter(email=email).exists():
+                messages.error(self.request, "You already have your info with us")
+                return HttpResponseRedirect(reverse('weather:form'))
+            else:
+                location = Location.objects.create(name=name)
+                visitor = Visitor.objects.create(email=email, location=location)
+                visitor.save()
+                messages.success(self.request, "Information saved...")
+                return HttpResponseRedirect(reverse('weather:index'))
+
+
+class SubscribeUnsubscribeView(View):
+    def get(self, request, pk):
+        visitor = Visitor.objects.get(pk=pk)
+        context = {'visitor': visitor}
+        return render(request, 'weather/unsubscribed.html', context)
+
+    def post(self, request, pk):
+        visitor = get_object_or_404(Visitor, pk=pk)
+
+        visitor.is_subscribed = not visitor.is_subscribed
+
+        visitor.save()
+        return HttpResponseRedirect(reverse('weather:subscribe-and-unsubscribed', args=[pk]))

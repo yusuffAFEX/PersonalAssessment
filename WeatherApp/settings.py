@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import django_heroku
+from django.contrib import messages
+
 django_heroku.settings(locals(), staticfiles=False)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,7 +29,7 @@ SECRET_KEY = 'django-insecure-*(2$nwbdk(trtifv&aa4(uzdpu26j_a)5381sa6d8%s_0)!5e8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['myweatherapptest.herokuapp.com']
+ALLOWED_HOSTS = ['myweatherapptest.herokuapp.com']#'myweatherapptest.herokuapp.com'
 
 
 # Application definition
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'weather',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -128,4 +131,24 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-GOOGLE_API_KEY = "AIzaSyBvuh7YyCBgkySF-W8RO1cCX_0hdGg66Vk"
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = "oyedeleyusuff@gmail.com"
+EMAIL_HOST_PASSWORD = "zvuwqqnsqayuqaee"
+
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger'
+}
+
+# GOOGLE_API_KEY = "AIzaSyBvuh7YyCBgkySF-W8RO1cCX_0hdGg66Vk"
+
+
+# GDAL_LIBRARY_PATH = 'C:\OSGeo4W\share\gdal'
+
+CELERY_BROKER_URL = "rediss://:p359d62f05338a9fac102b4aac080f9552cbbf660913a38987d900eec492885a3@ec2-34-203-148-111.compute-1.amazonaws.com:17460/"
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'

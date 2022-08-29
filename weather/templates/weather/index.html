@@ -5,52 +5,104 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-offset-4 is-4">
-                    <form method="get">{% csrf_token %}
-                        <div class="field has-addons">
-                            <div class="control is-expanded">
-                                <input class="input" type="text" name="location" placeholder="City Name">
+                    <div class="box">
+                        <article class="media">
+                            <div class="media-left">
+                                <figure class="image is-50x50">
+                                    <img src="http://openweathermap.org/img/w/10d.png" alt="Image">
+                                </figure>
                             </div>
-                            <div class="control">
-                                <button class="button is-info" type="submit">
-                                    Search
-                                </button>
+                            <div class="media-content">
+                                <div class="content">
+                                    <p>
+                                        <span class="title" id="name"></span>
+                                        <br>
+                                        <span class="subtitle" id="temp"></span>
+                                        <br><span id="desc"></span>
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                        </article>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
-    <section class="section">
-        <div class="container">
-            <div class="columns">
-                <div class="column is-offset-4 is-4">
-                    {{ ip2 }}
-                {{ ip_data }}
-                {{ load_data }}
-                {{ load_data.country }}
-                {{ load_data.query }}
-                {{ load_data.city }}
+{#    <section class="section">#}
+{#        <div class="container">#}
+{#            <div class="columns">#}
+{#                <div class="column is-offset-4 is-4">#}
+{#                    {{ ip_data }}#}
+{#                    {{ load_data }}#}
+{#                    {{ load_data.country }}#}
+{#                    {{ load_data.query }}#}
+{#                    {{ load_data.city }}#}
 {#                    {% for location in locations %}#}
-{#                    <div class="box">#}
-{#                        <article class="media">#}
-{#                            <div class="media-left">#}
-{#                                <figure class="image is-50x50">#}
-{#                                    <img src="http://openweathermap.org/img/w/10d.png" alt="Image">#}
-{#                                </figure>#}
+{#                        <div class="box">#}
+{##}
+{#                            <div class="content">#}
+{#                                <p>#}
+{#                                    <span class="title"><a href="{% url "weather:details" location %}">{{ location }}</a></span>#}
+{#                                </p>#}
 {#                            </div>#}
-{#                            <div class="media-content">#}
-{#                                <div class="content">#}
-{#                                    <p>#}
-{#                                        <span class="title"><a href="{% url "weather:details" location %}">{{ location }}</a></span>#}
-{#                                    </p>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </article>#}
-{#                    </div>#}
+{#                        </div>#}
 {#                    {% endfor %}#}
-                </div>
-            </div>
-        </div>
-    </section>
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </section>#}
+    <script>
+        function geoFindMe() {
+
+            const status = document.querySelector('#status');
+            const weathername = document.querySelector('#name');
+            const weathertemp = document.querySelector('#temp');
+            const weatherdesc = document.querySelector('#desc');
+
+
+            function success(position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                function weatherFunc(weatherdata){
+
+                    if (weatherdata) {
+                        weathername.textContent = weatherdata.name
+                        weathertemp.textContent = `${weatherdata.main.temp}K`
+                        weatherdesc.textContent = weatherdata.weather[0].description
+                    }else {
+                        weathername.textContent = "We can not find your location. Drop details to get your weather condition everyday."
+                    }
+                }
+
+                function myFunc(data){
+                    var weather = data
+
+                    fetch(`http://api.openweathermap.org/data/2.5/weather?q=${weather},nigeria&APPID=4c742b12a83585de3f10066724cd3d85`).then((weather)=> weather.json())
+                    .then(weatherdata => weatherFunc(weatherdata))
+                    .catch(error => {console.error(error)})
+
+                }
+
+                fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`).then((data)=> data.json())
+                    .then(data => myFunc(data.city))
+                    .catch(error => {console.error(error)})
+
+            }
+
+            function error() {
+                status.textContent = 'Unable to retrieve your location';
+            }
+
+            if (!navigator.geolocation) {
+                status.textContent = 'Geolocation is not supported by your browser';
+            } else {
+                navigator.geolocation.getCurrentPosition(success, error);
+            }
+
+        }
+
+        addEventListener('load', geoFindMe);
+
+    </script>
 {% endblock %}

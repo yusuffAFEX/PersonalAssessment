@@ -1,0 +1,16 @@
+{% extends 'weather/base.html' %}
+
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <p>Click the button to stop receiving weather information...<br><br>
+                <form method="post" action="{% url 'weather:subscribe-and-unsubscribed' visitor.id %}">{% csrf_token %}
+                    <button type="submit" class="btn btn-secondary">{% if visitor.is_subscribed %}
+                        Unsubscribed {% else %} Subscribe {% endif %}</button>
+                </form>
+                </p>
+            </div>
+        </div>
+    </section>
+{% endblock %}
