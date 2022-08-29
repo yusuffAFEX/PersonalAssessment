@@ -22,7 +22,6 @@ class HomeView(View):
 class LocationListView(ListView):
     model = Location
     template_name = 'weather/list.html'
-    context_object_name = 'locations'
 
     def get_queryset(self):
         search = self.request.GET.get('location')
