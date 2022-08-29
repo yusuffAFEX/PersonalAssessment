@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-*(2$nwbdk(trtifv&aa4(uzdpu26j_a)5381sa6d8%s_0)!5e8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []#'myweatherapptest.herokuapp.com'
+ALLOWED_HOSTS = ["myweatherapptest.herokuapp.com"]#'myweatherapptest.herokuapp.com'
 
 
 # Application definition
