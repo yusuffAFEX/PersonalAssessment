@@ -14,7 +14,7 @@ def my_scheduled_job(self):
     visitors = Visitor.objects.all()
     for visitor in visitors:
         try:
-            data = requests.get("http://api.openweathermap.org/data/2.5/weather?q=" + str(visitor.location) + ",nigeria&APPID=4c742b12a83585de3f10066724cd3d85").json()
+            data = requests.get("http://api.openweathermap.org/data/2.5/weather?q=" + str(visitor.location) + ",nigeria&units=metric&APPID=4c742b12a83585de3f10066724cd3d85").json()
         except Exception as e:
             return e
         weather_city = data['name']

@@ -25,7 +25,7 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 app.conf.beat_schedule = {
     'send_every_6am': {
         'task': 'weather.tasks.my_scheduled_job',
-        'schedule': crontab(minute='0', hour='6')
+        'schedule': crontab(minute='*/1')
     }
 }
 
