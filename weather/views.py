@@ -35,20 +35,22 @@ class LocationListView(ListView):
 class LocationDetailView(View):
     def get(self, request, location):
         api = requests.get(
-                "http://api.openweathermap.org/data/2.5/weather?q=" + location + ",nigeria&APPID=4c742b12a83585de3f10066724cd3d85").json()
+                "http://api.openweathermap.org/data/2.5/weather?q=" + location + ",nigeria&units=metric&APPID=4c742b12a83585de3f10066724cd3d85").json()
 
         # try:
         #     api = json.loads(api_request.content)
+        #     print(api)
         # except Exception:
         #     api = "Error..."
 
         context = {
             'api': api,
             'city': location,
-            'temperature': api['main']['temp'],
-            'description': api['weather'][0]['description'],
-            'icon': api['weather'][0]['icon'],
+            'temperature': api["main"]["temp"],
+            'description': api["weather"][0]["description"],
+            'icon': api["weather"][0]["icon"],
         }
+
         return render(request, "weather/detail.html", context)
 
 

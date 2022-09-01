@@ -3,34 +3,6 @@
 {% block content %}
 
 
-{#    <section class="section vh-100" style="background-color: #f5f6f7;">#}
-{#  <div class="container py-5 h-100">#}
-{#    <div class="row d-flex justify-content-center align-items-center h-100">#}
-{#      <div class="col-md-10 col-lg-8 col-xl-6">#}
-{##}
-{#        <div class="card bg-dark text-white" style="border-radius: 40px;">#}
-{#          <div class="bg-image" style="border-radius: 35px;">#}
-{#            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-weather/draw1.webp"#}
-{#              class="card-img" alt="weather" />#}
-{#            <div class="mask" style="background-color: rgba(190, 216, 232, .5);"></div>#}
-{#          </div>#}
-{#          <div class="card-img-overlay text-dark p-5">#}
-{#            <h4 class="mb-0" id="name"></h4>#}
-{#            <p class="display-2 my-3" id="temp"></p>#}
-{#            <p class="mb-2" >Feels Like: <strong>-1.08 °C</strong></p>#}
-{#            <h5 id="desc">Snowy</h5>#}
-{#          </div>#}
-{#        </div>#}
-{##}
-{#      </div>#}
-{#    </div>#}
-{#  </div>#}
-{#</section>#}
-
-
-
-
-
     <section class="section">
         <div class="container">
             <div class="columns">
@@ -59,81 +31,55 @@
         </div>
     </section>
 
-
-{#    <section class="section">#}
-{#        <div class="container">#}
-{#            <div class="columns">#}
-{#                <div class="column is-offset-4 is-4">#}
-{#                    {{ ip_data }}#}
-{#                    {{ load_data }}#}
-{#                    {{ load_data.country }}#}
-{#                    {{ load_data.query }}#}
-{#                    {{ load_data.city }}#}
-{#                    {% for location in locations %}#}
-{#                        <div class="box">#}
-{##}
-{#                            <div class="content">#}
-{#                                <p>#}
-{#                                    <span class="title"><a href="{% url "weather:details" location %}">{{ location }}</a></span>#}
-{#                                </p>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    {% endfor %}#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    </section>#}
     <script>
         function geoFindMe() {
 
-            const status = document.querySelector('#status');
             const weathername = document.querySelector('#name');
             const weathertemp = document.querySelector('#temp');
             const weatherdesc = document.querySelector('#desc');
+
+            {#fetch(`/?latitude=${latitude}&longitude=${longitude}`, {#}
+            {#        method: 'GET',#}
+            {#        headers: {#}
+            {#            'Accept': 'application/json',#}
+            {#            'Content-Type': 'application/json',#}
+            {#        },#}
+            {#    }).then(response => response);#}
 
 
             function success(position) {
                 const latitude = position.coords.latitude;
                 const longitude = position.coords.longitude;
 
-                function weatherFunc(weatherdata){
+
+                function weatherFunc(weatherdata) {
 
                     if (weatherdata) {
                         weathername.textContent = weatherdata.name
-                        weathertemp.textContent = `${weatherdata.main.temp}K`
+                        weathertemp.textContent = `${weatherdata.main.temp}° C`
                         weatherdesc.textContent = weatherdata.weather[0].description
-                    }else {
+                    } else {
                         weathername.textContent = "We can not find your location. Drop details to get your weather condition everyday."
                     }
                 }
 
-                function myFunc(data){
-                    var weather = data
 
-                    fetch(`http://api.openweathermap.org/data/2.5/weather?q=${weather},nigeria&APPID=4c742b12a83585de3f10066724cd3d85`).then((weather)=> weather.json())
+                fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&APPID=4c742b12a83585de3f10066724cd3d85`).then((weather) => weather.json())
                     .then(weatherdata => weatherFunc(weatherdata))
-                    .catch(error => {console.error(error)})
-
-                }
-
-                fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`).then((data)=> data.json())
-                    .then(data => myFunc(data.city))
-                    .catch(error => {console.error(error)})
+                    .catch(error => {
+                        console.error(error)
+                    })
 
             }
 
-            function error() {
-                status.textContent = 'Unable to retrieve your location';
+            function error(){
+               console.log('An occurred on locating the user.')
             }
 
-            if (!navigator.geolocation) {
-                status.textContent = 'Geolocation is not supported by your browser';
-            } else {
-                navigator.geolocation.getCurrentPosition(success, error);
-            }
+
+            navigator.geolocation.getCurrentPosition(success, error);
 
         }
-
         addEventListener('load', geoFindMe);
 
     </script>

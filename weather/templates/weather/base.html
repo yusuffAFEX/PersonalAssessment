@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -29,31 +30,15 @@
                             <a class="nav-link {% if url_name == "location-list" %}active{% endif %}" href="{% url 'weather:location-list' %}">Locations</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link d-flex {% if url_name == "form" %}active{% endif %}" href="{% url 'weather:form' %}">Get Weather Condition</a>
+                            <a class="nav-link d-flex {% if url_name == "form" %}active{% endif %}" href="{% url 'weather:form' %}">Get Your Weather Info</a>
                         </li>
                     </ul>
                 {% endwith %}
-{#      <form class="d-flex">#}
-{#        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="location">#}
-{#        <button class="btn btn-outline-secondary" type="submit">Search</button>#}
-{#      </form>#}
     </div>
 
   </div>
 </nav>
-
-
-
-{#    <section class="hero is-primary">#}
-{#        <div class="hero-body">#}
-{#            <div class="container">#}
-{#                <h1 class="title">#}
-{#                    What's the weather like?#}
-{#                </h1>#}
-{#            </div>#}
-{#        </div>#}
-{#    </section>#}
-    {% if messages %}
+{% if messages %}
                 {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">{{ message }}</div>
             {% endfor %}

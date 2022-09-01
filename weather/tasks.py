@@ -1,5 +1,6 @@
 import requests
 from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.utils.safestring import mark_safe
 
@@ -23,6 +24,6 @@ def my_scheduled_job(self):
         message = f'Hi, Currently temperature is {weather_temp} and description is {weather_desc}. Click on the link to stop the notification..http://127.0.0.1:8000/user/{visitor.id}'
         if visitor.location:
             if visitor.is_subscribed:
-                send_mail(subject, message, email_from, recipient_list=[visitor.email, ])
+                send_mail(subject, message, email_from, recipient_list=[visitor.email, ],)
 
 
